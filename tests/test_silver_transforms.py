@@ -4,7 +4,6 @@ filtrado, manejo de anomalias, logica SCD)."""
 from datetime import datetime
 
 from pyspark.sql import Row
-
 from saas_pipeline import silver
 
 _FIXED_TS = datetime(2025, 1, 1, 0, 0, 0)
