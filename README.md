@@ -53,6 +53,43 @@ Compatibles con Databricks Runtime 15.x LTS.
 make install     # crea venv, instala el paquete en modo editable + deps de dev
 ```
 
+### Notas para Windows (probado en un entorno real durante el desarrollo)
+
+En Windows no hay `make` por defecto, así que los comandos del Makefile se corren
+directos. Además, PySpark + Delta Lake tienen 3 fricciones específicas de Windows
+que vale la pena resolver antes de instalar:
+
+1. **Java bloqueado por Smart App Control.** El `openjdk` que instala conda-forge
+   no viene firmado digitalmente y Windows lo bloquea ("una directiva de Control de
+   aplicaciones bloqueó este archivo"). Solución: instalar un JDK firmado en su lugar:
+```powershell
+   winget install EclipseAdoptium.Temurin.17.JDK
+   conda remove openjdk -y                          # si ya lo habías instalado por conda
+   conda env config vars set JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.x.x-hotspot" -n <tu_env>
+```
+
+2. **`Python was not found` al correr Spark (alias de Microsoft Store).** Windows
+   intercepta el comando `python` con un alias que redirige a la Store. Hay que
+   decirle a Spark explícitamente qué `python.exe` usar:
+```powershell
+   conda env config vars set PYSPARK_PYTHON="<ruta a tu python.exe del env>" -n <tu_env>
+   conda env config vars set PYSPARK_DRIVER_PYTHON="<ruta a tu python.exe del env>" -n <tu_env>
+```
+
+3. **`HADOOP_HOME and hadoop.home.dir are unset` (falta winutils.exe).** Hadoop
+   (dependencia de Spark) necesita `winutils.exe` en Windows aunque no se use HDFS:
+```powershell
+   mkdir C:\hadoop\bin
+   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/cdarlint/winutils/master/hadoop-3.3.6/bin/winutils.exe" -OutFile "C:\hadoop\bin\winutils.exe"
+   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/cdarlint/winutils/master/hadoop-3.3.6/bin/hadoop.dll" -OutFile "C:\hadoop\bin\hadoop.dll"
+   # copiar hadoop.dll a C:\Windows\System32 (requiere terminal de administrador)
+   conda env config vars set HADOOP_HOME="C:\hadoop" -n <tu_env>
+```
+
+Después de fijar estas 3 variables (`JAVA_HOME`, `PYSPARK_PYTHON`/`PYSPARK_DRIVER_PYTHON`,
+`HADOOP_HOME`) con `conda env config vars set`, hay que reactivar el entorno
+(`conda deactivate` + `conda activate <tu_env>`) para que tomen efecto.
+
 ## 4. Cómo correr el pipeline
 
 ```bash
