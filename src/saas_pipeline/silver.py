@@ -222,10 +222,14 @@ def build_dim_materials(spark: SparkSession, cfg, tenant: str) -> dict:
 def build_fact_deliveries(spark: SparkSession, cfg, tenant: str) -> dict:
     from delta.tables import DeltaTable
 
-    lp = paths_for(cfg, tenant, "deliveries")
+    # bronze_lp: lee de bronze/<tenant>/deliveries (nombre de ingesta cruda, sin prefijo).
+    # fact_lp: escribe/lee de silver/<tenant>/fact_deliveries (prefijo fact_, seccion 5.3).
+    # Son nombres de tabla distintos a proposito -- no reusar el mismo LayerPaths para ambos.
+    bronze_lp = paths_for(cfg, tenant, "deliveries")
+    fact_lp = paths_for(cfg, tenant, "fact_deliveries")
     dim_lp = paths_for(cfg, tenant, "dim_materials")
 
-    bronze_df = spark.read.format("delta").load(lp.bronze_table())
+    bronze_df = spark.read.format("delta").load(bronze_lp.bronze_table())
     dim = spark.read.format("delta").load(dim_lp.silver_table())
 
     result = transform_deliveries(bronze_df, dim, tenant)
@@ -233,7 +237,7 @@ def build_fact_deliveries(spark: SparkSession, cfg, tenant: str) -> dict:
 
     enriched = enrich_with_materials_temporal(clean, dim)
 
-    target_path = lp.silver_table()
+    target_path = fact_lp.silver_table()
     if _delta_table_exists(spark, target_path):
         target = DeltaTable.forPath(spark, target_path)
         merge_cond = " AND ".join(f"t.{k} = s.{k}" for k in BUSINESS_KEY_FACT)
@@ -247,7 +251,7 @@ def build_fact_deliveries(spark: SparkSession, cfg, tenant: str) -> dict:
     else:
         enriched.write.format("delta").partitionBy("fecha_proceso").save(target_path)
 
-    quarantine_path = lp.silver_quarantine()
+    quarantine_path = fact_lp.silver_quarantine()
     partitions = [
         r["fecha_proceso"] for r in quarantine.select("fecha_proceso").distinct().collect()
     ]
