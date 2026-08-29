@@ -1,0 +1,4 @@
+# Config especifica del tenant 'sv'. Vacio salvo overrides puntuales.
+# Onboarding de un tenant nuevo = agregar un archivo como este (ver docs/onboarding-tenant.md).
+tenant:
+  code: "sv"

@@ -1,0 +1,30 @@
+[project]
+name = "saas-pipeline"
+version = "0.1.0"
+description = "Pipeline Medallion multi-tenant (Bronze/Silver/Gold) - Prueba Tecnica Senior Data Engineer"
+requires-python = ">=3.11"
+dependencies = [
+    "pyspark==3.5.1",
+    "delta-spark==3.1.0",
+    "omegaconf==2.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.2.0",
+    "ruff==0.5.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

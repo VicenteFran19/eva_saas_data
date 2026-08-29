@@ -1,0 +1,12 @@
+# Overrides de ambiente qa. En Databricks real esto apuntaria a un catalogo "saas_qa"
+# y paths ADLS separados (abfss://qa@.../bronze, etc). Aqui, para la prueba, se simula
+# con un prefijo local distinto para no mezclar datos con dev.
+paths:
+  bronze: "data_qa/bronze"
+  silver: "data_qa/silver"
+  gold: "data_qa/gold"
+  quarantine_root: "data_qa"
+  quality_logs: "data_qa/shared/quality_logs"
+
+quality:
+  fail_on_critical: true

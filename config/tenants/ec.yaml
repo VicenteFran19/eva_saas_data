@@ -1,0 +1,4 @@
+# Config especifica del tenant 'ec'. Vacio salvo overrides puntuales.
+# Onboarding de un tenant nuevo = agregar un archivo como este (ver docs/onboarding-tenant.md).
+tenant:
+  code: "ec"

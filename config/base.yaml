@@ -1,0 +1,25 @@
+# Defaults compartidos por todos los ambientes y tenants.
+# Un tenant/ambiente sobreescribe solo lo que necesita (ver config/env/*.yaml y config/tenants/*.yaml).
+
+paths:
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  quarantine_root: "data"
+  quality_logs: "data/shared/quality_logs"
+  raw: "data/raw"
+
+execution:
+  start_date: null   # YYYY-MM-DD, se sobreescribe por CLI
+  end_date: null      # YYYY-MM-DD, se sobreescribe por CLI
+  tenant: "all"        # codigo de tenant en minuscula, o "all"
+  fail_fast: false
+
+quality:
+  fail_on_critical: false
+
+business_rules:
+  cs_to_st_factor: 20
+  valid_tipo_entrega:
+    routine: ["ZPRE", "ZVE1"]
+    bonus: ["Z04", "Z05"]

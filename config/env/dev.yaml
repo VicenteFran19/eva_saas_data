@@ -1,0 +1,10 @@
+# Overrides de ambiente dev. Los paths quedan bajo data/ local (dev = ejecucion local/Community).
+paths:
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  quarantine_root: "data"
+  quality_logs: "data/shared/quality_logs"
+
+quality:
+  fail_on_critical: false

@@ -1,0 +1,11 @@
+# Overrides de ambiente productivo (main). En Databricks real: catalogo "saas_main",
+# paths ADLS productivos con permisos restringidos. Aqui se simula con prefijo local.
+paths:
+  bronze: "data_main/bronze"
+  silver: "data_main/silver"
+  gold: "data_main/gold"
+  quarantine_root: "data_main"
+  quality_logs: "data_main/shared/quality_logs"
+
+quality:
+  fail_on_critical: true
